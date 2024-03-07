@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StackelbergCompiler\Stackelberg.MetaAction.Compiler.csproj" />
+    <ProjectReference Include="..\Stackelberg.MetaAction.Compiler\Stackelberg.MetaAction.Compiler.csproj" />
   </ItemGroup>
 
   <ItemGroup>
