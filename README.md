@@ -15,3 +15,4 @@
 This is a package that can take in a normal PDDL domain and problem as well as a meta action, and compile them into a Stackelberg Variant.
 This Stackelberg Variant can then be used to verify the validity of the meta action.
 This is based on the paper [Can I Really Do That? Verification of Meta-Operators via Stackelberg Planning](https://doi.org/10.24963/ijcai.2023/602).
+The project is also available as a package on the [Nuget Package Manager](https://www.nuget.org/packages/Stackelberg.MetaAction.Compiler/).
