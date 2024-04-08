@@ -44,10 +44,11 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
                 {
                     var newNot = new NotExp(preAnd, new PredicateExp("=", new List<NameExp>() { new NameExp(illigal.Parameter1), new NameExp(illigal.Parameter2) }));
                     newNot.Child.Parent = newNot;
-                    preAnd.Add(newNot);
+                    if (!preAnd.Contains(newNot))
+                        preAnd.Add(newNot);
                 }
             }
-             
+            
             return copy;
         }
 
