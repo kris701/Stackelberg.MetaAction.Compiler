@@ -46,7 +46,7 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
                     preAnd.Add(newNot);
                 }
             }
-
+             
             return copy;
         }
 
@@ -59,6 +59,8 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
             {
                 Parameter1 = parameter1;
                 Parameter2 = parameter2;
+                Parameter1.RemoveContext();
+                Parameter2.RemoveContext();
             }
 
             public override int GetHashCode()
@@ -70,6 +72,7 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
             {
                 if (obj is IlligalParameters other)
                 {
+                    if (other.Parameter1.Equals(Parameter2) && other.Parameter2.Equals(Parameter1)) return true;
                     if (!other.Parameter1.Equals(Parameter1)) return false;
                     if (!other.Parameter2.Equals(Parameter2)) return false;
                     return true;
