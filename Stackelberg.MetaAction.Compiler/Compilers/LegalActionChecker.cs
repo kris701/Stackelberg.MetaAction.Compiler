@@ -9,7 +9,7 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
         {
             var copy = act.Copy();
 
-            var illigals = new HashSet<IlligalParameters>();
+            var illigals = new List<IlligalParameters>();
 
             if (copy.Effects is AndExp effAnd)
             {
@@ -31,7 +31,7 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
                         for(int i = 0; i < child.Arguments.Count; i++)
                         {
                             if (child.Arguments[i].Name != first.Arguments[i].Name)
-                                illigals.Add(new IlligalParameters(child.Arguments[i].Copy(), first.Arguments[i].Copy()));
+                                illigals.Add(new IlligalParameters(child.Arguments[i].Name, first.Arguments[i].Name));
                         }
                     }
                 }
@@ -39,9 +39,10 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
 
             if (copy.Preconditions is AndExp preAnd)
             {
+                illigals = illigals.Distinct().ToList();
                 foreach (var illigal in illigals)
                 {
-                    var newNot = new NotExp(preAnd, new PredicateExp("=", new List<NameExp>() { illigal.Parameter1, illigal.Parameter2 }));
+                    var newNot = new NotExp(preAnd, new PredicateExp("=", new List<NameExp>() { new NameExp(illigal.Parameter1), new NameExp(illigal.Parameter2) }));
                     newNot.Child.Parent = newNot;
                     preAnd.Add(newNot);
                 }
@@ -52,15 +53,13 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
 
         private class IlligalParameters
         {
-            public NameExp Parameter1 { get; set; }
-            public NameExp Parameter2 { get; set; }
+            public string Parameter1 { get; set; }
+            public string Parameter2 { get; set; }
 
-            public IlligalParameters(NameExp parameter1, NameExp parameter2)
+            public IlligalParameters(string parameter1, string parameter2)
             {
                 Parameter1 = parameter1;
                 Parameter2 = parameter2;
-                Parameter1.RemoveContext();
-                Parameter2.RemoveContext();
             }
 
             public override int GetHashCode()
@@ -72,9 +71,9 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
             {
                 if (obj is IlligalParameters other)
                 {
-                    if (other.Parameter1.Equals(Parameter2) && other.Parameter2.Equals(Parameter1)) return true;
-                    if (!other.Parameter1.Equals(Parameter1)) return false;
-                    if (!other.Parameter2.Equals(Parameter2)) return false;
+                    if (other.Parameter1 == Parameter2 && other.Parameter2 == Parameter1) return true;
+                    if (other.Parameter1 != Parameter1) return false;
+                    if (other.Parameter2 != Parameter2) return false;
                     return true;
                 }
                 return false;
