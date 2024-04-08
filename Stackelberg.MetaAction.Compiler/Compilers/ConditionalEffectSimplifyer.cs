@@ -11,9 +11,19 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
         {
             var newDomain = domain.Copy();
 
-            newDomain.Actions = GenerateSimplifiedActions(newDomain.Actions);
+            newDomain.Actions = EnsureActionLegality(GenerateSimplifiedActions(newDomain.Actions));
 
             return new PDDLDecl(newDomain, problem);
+        }
+
+        private List<ActionDecl> EnsureActionLegality(List<ActionDecl> actions)
+        {
+            List<ActionDecl> newActions = new List<ActionDecl>();
+
+            foreach (var action in actions)
+                newActions.Add(LegalActionChecker.EnsureLegalPreconditions(action));
+
+            return newActions;
         }
 
         private List<ActionDecl> GenerateSimplifiedActions(List<ActionDecl> actions)

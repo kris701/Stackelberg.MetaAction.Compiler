@@ -34,6 +34,7 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
             UpdateAndInsertMetaActionToFit(newDomain, metaAction);
             InsertTurnPredicateIntoActionsPreconditions(newDomain);
             InsertTurnPredicateIntoPredicates(newDomain);
+            newDomain.Actions = EnsureActionLegality(newDomain.Actions);
 
             return new PDDLDecl(newDomain, newProblem);
         }
@@ -253,10 +254,12 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
                     if (pred.Parent is NotExp)
                     {
                         var trueWhen = new WhenExp(action);
-                        trueWhen.Condition = new NotExp(trueWhen, new PredicateExp(
+                        var newNot = new NotExp(trueWhen, new PredicateExp(
                             trueWhen,
                             $"{ReservedNames.LeaderStatePrefix}{pred.Name}",
                             pred.Arguments));
+                        newNot.Child.Parent = newNot;
+                        trueWhen.Condition = newNot;
                         trueWhen.Effect = new PredicateExp(
                             trueWhen,
                             $"{ReservedNames.IsGoalPrefix}{pred.Name}",
@@ -268,10 +271,12 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
                             falseWhen,
                             $"{ReservedNames.LeaderStatePrefix}{pred.Name}",
                             pred.Arguments);
-                        falseWhen.Effect = new NotExp(new PredicateExp(
+                        var newNot2 = new NotExp(new PredicateExp(
                             falseWhen,
                             $"{ReservedNames.IsGoalPrefix}{pred.Name}",
                             pred.Arguments));
+                        newNot2.Child.Parent = newNot;
+                        falseWhen.Effect = newNot2;
                         newExpressions.Add(falseWhen);
                     }
                     else
@@ -337,6 +342,16 @@ namespace Stackelberg.MetaAction.Compiler.Compilers
                 newActions.Add(followerAct);
             }
             domain.Actions = newActions;
+        }
+
+        private List<ActionDecl> EnsureActionLegality(List<ActionDecl> actions)
+        {
+            List<ActionDecl> newActions = new List<ActionDecl>();
+
+            foreach (var action in actions)
+                newActions.Add(LegalActionChecker.EnsureLegalPreconditions(action));
+
+            return newActions;
         }
 
         #endregion

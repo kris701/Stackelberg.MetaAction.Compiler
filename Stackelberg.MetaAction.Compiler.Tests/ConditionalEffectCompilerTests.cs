@@ -367,7 +367,7 @@ namespace Stackelberg.MetaAction.Compiler.Compilers.Tests
             {
                 if (act.Name.StartsWith(ReservedNames.FollowerActionPrefix))
                 {
-                    var effPreds = act.Effects.FindTypes<PredicateExp>();
+                    var effPreds = act.Effects.FindTypes<PredicateExp>(new List<Type>() { typeof(WhenExp) });
                     int pos = 0;
                     int neg = 0;
                     foreach (var pred in effPreds)
