@@ -17,9 +17,10 @@ namespace Stackelberg.MetaAction.Compiler
     {
         static int Main(string[] args)
         {
-            Parser.Default.ParseArguments<Options>(args)
-              .WithParsed(Run)
-              .WithNotParsed(HandleParseError);
+            var parser = new Parser(with => with.HelpWriter = null);
+            var parserResult = parser.ParseArguments<Options>(args);
+            parserResult.WithNotParsed(errs => DisplayHelp(parserResult, errs));
+            parserResult.WithParsed(Run);
             return 0;
         }
 

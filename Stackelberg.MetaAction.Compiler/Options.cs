@@ -7,9 +7,8 @@ namespace Stackelberg.MetaAction.Compiler
         [Flags]
         public enum TargetCompiler
         {
-            None = 0,
-            Conditional = 1,
-            Simplified = 2
+            Conditional = 0,
+            Simplified = 1
         }
 
         [Option("domain", Required = true, HelpText = "Path to the domain file to use")]
